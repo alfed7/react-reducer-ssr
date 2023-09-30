@@ -36,16 +36,18 @@ export function combineReducers<M>(
   : never
 export function combineReducers<S extends Record<string, any>, A>(reducers: {[key: string]: ImmerReducer<S, A>}) {
   return (rootState: S, action: A): S => {
+    rootState = rootState || {}
+    const rootStateUpdated = {...rootState};
     Object.keys(reducers).forEach(k => {
-        const nextReducer = reducers[k];
-        if(nextReducer) {
-          const nextState = produce(rootState[k] || {}, (draft: any) => {
-            nextReducer(draft || {}, action);
-          });
-          (rootState as Record<string, any>)[k] = nextState
-        }
-      }
+      const nextReducer = reducers[k];
+      if(nextReducer) {
+        if(!(k in rootState)) (rootState as any)[k] = {}
+        const nextState = produce(rootState[k] || {}, (draft: any) => {
+          nextReducer(draft || {}, action);
+        });
+        (rootStateUpdated as Record<string, any>)[k] = nextState
+      }}
     );
-    return rootState;
+    return rootStateUpdated;
   }
 }
