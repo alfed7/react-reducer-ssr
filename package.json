@@ -1,7 +1,8 @@
 {
   "name": "react-reducer-ssr",
-  "version": "0.5.5",
-  "repository": "git@github.com:alfed7/react-reducer-ssr.git",
+  "version": "0.5.6",
+  "homepage": "https://github.com/alfed7/react-reducer-ssr",
+  "repository": "https://github.com/alfed7/react-reducer-ssr",
   "author": "Alexander Fedorenko",
   "license": "MIT",
   "private": false,
