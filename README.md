@@ -103,7 +103,7 @@ const MyComponent = () => {
   const dispatch = useDispatch();
 
   const fetchData = async () => {
-    dispatch(usersActions.getUsers());
+    await dispatch(usersActions.getUsers());
   };
 
   return (
@@ -121,8 +121,13 @@ export const usersActions = {
 
 function getUsers(companyCode: string) {
   return async () => {
-    const userList = await fetch("some_url");
-    return { type: 'GET_ALL_USERS', userList }
+    try {
+      const userList = await fetch("some_url");
+      return { type: 'GET_ALL_USERS', userList }
+    }
+    catch(err) {
+      return { type: 'GET_ALL_USERS_FAILED', err }
+    }
   }
 }
 ```
@@ -138,6 +143,10 @@ const store = createServerStore(reducers, {/*initial state here*/} as any);
 
 loadData(store.dispatch);
 ```
+
+## Example
+
+For the complete example see [react-ssr-ts-scss-rollup](https://github.com/alfed7/react-ssr-ts-scss-rollup) starter template.
 
 ## Contributing
 
