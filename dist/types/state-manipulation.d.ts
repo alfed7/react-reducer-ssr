@@ -7,7 +7,7 @@ export interface AnyAction extends Action {
 }
 export type EmptyState = Record<string, never> | {};
 export type SelectorFunction<T> = (root: T) => any | null;
-export type DispatchFunction = (action: AnyAction) => void;
+export type DispatchFunction = (action: AnyAction | Promise<Action>) => void;
 export interface TypedUseSelectorHook<TState> {
     <TSelected>(selector: (state: TState) => TSelected): TSelected;
     <Selected = unknown>(selector: (state: TState) => Selected): Selected;

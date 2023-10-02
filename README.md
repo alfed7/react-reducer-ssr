@@ -79,10 +79,10 @@ export function usersReducer(draft: IUsersState, action: AnyAction): IUsersState
 Selectors help you access specific parts of your state. Here's how you can use selectors:
 
 ```jsx
-import { useSelector } from 'react-reducer-ssr';
+import { useStateSelector } from "./context";
 
 const MyComponent = () => {
-  const users = useSelector(root => root.users);
+  const users = useStateSelector(root => root.users);
 
   return (
     <div>
@@ -119,15 +119,14 @@ export const usersActions = {
   getUsers
 }
 
-function getUsers(companyCode: string) {
-  return async () => {
-    try {
-      const userList = await fetch("some_url");
-      return { type: 'GET_ALL_USERS', userList }
-    }
-    catch(err) {
-      return { type: 'GET_ALL_USERS_FAILED', err }
-    }
+async function getUsers(companyCode: string) {
+  try {
+    const response = await fetch("some_url");
+    const userList = await userList.json();
+    return { type: 'GET_ALL_USERS', userList }
+  }
+  catch(err) {
+    return { type: 'GET_ALL_USERS_FAILED', err }
   }
 }
 ```
@@ -141,7 +140,13 @@ import { createServerStore, DispatchFunction } from 'react-reducer-ssr'
 
 const store = createServerStore(reducers, {/*initial state here*/} as any);
 
-loadData(store.dispatch);
+...
+await loadData(store.dispatch);
+...
+async function loadData(dispatch: DispatchFunction, cookies: any) {
+  await dispatch(userActions.getUsers());
+}
+
 ```
 
 ## Example

@@ -37,7 +37,8 @@
     "@types/node": "^20.6.2",
     "@types/react": "^18.2.21",
     "typescript": "^5.2.2",
-    "yarn-run-all": "^3.1.1"
+    "yarn-run-all": "^3.1.1",
+    "ts-jest": "29.1.1"
   },
   "scripts": {
     "tsc": "tsc -b",
@@ -45,7 +46,7 @@
     "lint": "eslint \"src/**\" --ext .ts --ext .tsx",
     "build": "yarn tsc & rollup -c",
     "dev": "rollup -c -w",
-    "test": "yarn",
+    "test": "jest",
     "pretest": "npm run build"
   },
   "files": [

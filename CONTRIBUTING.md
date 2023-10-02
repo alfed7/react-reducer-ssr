@@ -1,4 +1,3 @@
-```markdown
 # Contributing to React Reducer SSR
 
 First off, thank you for considering contributing to React Reducer SSR. We welcome contributions from the community, and your involvement helps improve the project for everyone.
@@ -13,7 +12,7 @@ We follow a [Code of Conduct](CODE_OF_CONDUCT.md) to create a respectful and inc
 
 There are several ways to contribute to React Reducer SSR:
 
-1. **Bug Reports:** If you encounter any issues or bugs, please [open an issue](https://github.com/your/repo/issues) on GitHub. Provide as much detail as possible, including the steps to reproduce the problem and your environment.
+1. **Bug Reports:** If you encounter any issues or bugs, please [open an issue](https://github.com/alfed7/react-reducer-ssr/issues) on GitHub. Provide as much detail as possible, including the steps to reproduce the problem and your environment.
 
 2. **Feature Requests:** If you have an idea for a new feature or improvement, feel free to [open an issue](https://github.com/alfed7/react-reducer-ssr/issues) to discuss it. We value your input.
 
@@ -68,4 +67,3 @@ Please adhere to the coding style and conventions used in the project. If there 
 By contributing to React Reducer SSR, you agree that your contributions will be licensed under the project's [MIT License](LICENSE).
 
 Thank you for contributing to React Reducer SSR and helping us make it better for everyone!
-```
