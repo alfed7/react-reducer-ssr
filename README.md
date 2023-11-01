@@ -64,7 +64,7 @@ export function usersReducer(draft: IUsersState, action: AnyAction): IUsersState
   switch (action.type) {
     case 'GET_ALL_USERS': {
       draft.userList = action.userList;
-    }
+    } break;
   }
   return draft
 }
