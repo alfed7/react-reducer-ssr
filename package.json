@@ -1,9 +1,10 @@
 {
   "name": "react-reducer-ssr",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "homepage": "https://github.com/alfed7/react-reducer-ssr",
   "repository": "https://github.com/alfed7/react-reducer-ssr",
   "author": "Alexander Fedorenko",
+  "description": "React reducer with server side rendering",
   "license": "MIT",
   "private": false,
   "main": "dist/index.cjs.js",
