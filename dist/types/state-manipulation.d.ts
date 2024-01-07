@@ -21,8 +21,8 @@ export interface IStateStore<T> {
     services?: any;
     dispatch: DispatchFunction;
 }
-export declare function createServerStore<T>(reducer: Reducer<T, AnyAction>, services?: any, initialState?: T): IStateStore<T>;
+export declare function createServerStore<T>(reducer: Reducer<T, AnyAction>, customParams?: any, initialState?: T): IStateStore<T>;
 export declare function NullDispatch<T>(s: T): void;
 export declare function isPromise(v: any): v is Promise<any>;
-export declare function wrapDispatchWithAsync<T>(dispatch: Dispatch<T>, services?: any): (nextState: Promise<T> | T) => Promise<void>;
+export declare function wrapDispatchWithAsync<T>(dispatch: Dispatch<T>, customParams?: any): (nextState: Promise<T> | T) => Promise<void>;
 //# sourceMappingURL=state-manipulation.d.ts.map

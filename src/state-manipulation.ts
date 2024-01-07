@@ -30,14 +30,13 @@ export interface IStateStore<T> {
   dispatch: DispatchFunction
 }
 export function createServerStore<T>(
-  reducer: Reducer<T, AnyAction>, services?: any, initialState?: T): IStateStore<T> {
+  reducer: Reducer<T, AnyAction>, customParams?: any, initialState?: T): IStateStore<T> {
   const ssrDispatch = (action: AnyAction) => {
     store.root = reducer(store.root, action);
   };
   const store: IStateStore<T> = { 
     root: initialState || {} as any,
-    services,
-    dispatch: wrapDispatchWithAsync(ssrDispatch, services)
+    dispatch: wrapDispatchWithAsync(ssrDispatch, customParams)
   };
   return store;
 }
@@ -48,14 +47,14 @@ export function isPromise(v: any): v is Promise<any> {
   return v && typeof v.then === 'function';
 }
 
-export function wrapDispatchWithAsync<T>(dispatch: Dispatch<T>, services?: any) {
+export function wrapDispatchWithAsync<T>(dispatch: Dispatch<T>, customParams?: any) {
   return (nextState: Promise<T> | T): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
       if(isPromise(nextState)) {
         nextState
           .then((s: T) => {
             if(typeof s === 'function') {
-              const r = (s as ActionFunction)(dispatch as DispatchFunction, {}, services);
+              const r = (s as ActionFunction)(dispatch as DispatchFunction, {}, customParams);
               if(isPromise(r)) {
                 r
                   .then(((s: T) => {

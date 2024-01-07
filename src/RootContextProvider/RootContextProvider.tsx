@@ -7,11 +7,12 @@ const DispatchContext = createContext(null);
 export interface IRootContextProps<T extends EmptyState> {
   children: ReactNode
   reducer: Reducer<T, AnyAction>
+  customParams?: any
   initialState: T
 }
 
 export function RootContextProvider<T extends EmptyState>(
-  { children, reducer, initialState }: IRootContextProps<T>) {
+  { children, reducer, customParams, initialState }: IRootContextProps<T>) {
   const [root, dispatch] = useReducer<Reducer<T, AnyAction>>(
     reducer,
     initialState
@@ -19,9 +20,9 @@ export function RootContextProvider<T extends EmptyState>(
 
   return (
     <RootContext.Provider value={root as any}>
-      <DispatchContext.Provider value={wrapDispatchWithAsync(dispatch) as any}>
-        {children}
-      </DispatchContext.Provider>
+        <DispatchContext.Provider value={wrapDispatchWithAsync(dispatch, customParams) as any}>
+          {children}
+        </DispatchContext.Provider>
     </RootContext.Provider>
   );
 }
