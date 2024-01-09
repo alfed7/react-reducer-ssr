@@ -1,1 +1,123 @@
-"use strict";var t=require("react"),r=require("react/jsx-runtime"),e=require("immer");function n(t){}function o(t){return t&&"function"==typeof t.then}function i(t,r){return function(e){return new Promise((function(n,i){o(e)?e.then((function(e){if("function"==typeof e){var u=e(t,{},r);o(u)?u.then((function(t){n()})).catch((function(t){return i(t)})):n()}else t(e),n()})).catch((function(t){return i(t)})):(t(e),n())}))}}function u(t,r){return function(t){if(Array.isArray(t))return t}(t)||function(t,r){var e=null==t?null:"undefined"!=typeof Symbol&&t[Symbol.iterator]||t["@@iterator"];if(null!=e){var n,o,i,u,c=[],a=!0,f=!1;try{if(i=(e=e.call(t)).next,0===r){if(Object(e)!==e)return;a=!1}else for(;!(a=(n=i.call(e)).done)&&(c.push(n.value),c.length!==r);a=!0);}catch(t){f=!0,o=t}finally{try{if(!a&&null!=e.return&&(u=e.return(),Object(u)!==u))return}finally{if(f)throw o}}return c}}(t,r)||function(t,r){if(!t)return;if("string"==typeof t)return c(t,r);var e=Object.prototype.toString.call(t).slice(8,-1);"Object"===e&&t.constructor&&(e=t.constructor.name);if("Map"===e||"Set"===e)return Array.from(t);if("Arguments"===e||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(e))return c(t,r)}(t,r)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function c(t,r){(null==r||r>t.length)&&(r=t.length);for(var e=0,n=new Array(r);e<r;e++)n[e]=t[e];return n}var a=t.createContext(null),f=t.createContext(null);function l(t){return l="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},l(t)}function s(t,r){var e=Object.keys(t);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(t);r&&(n=n.filter((function(r){return Object.getOwnPropertyDescriptor(t,r).enumerable}))),e.push.apply(e,n)}return e}function p(t,r,e){return(r=function(t){var r=function(t,r){if("object"!==l(t)||null===t)return t;var e=t[Symbol.toPrimitive];if(void 0!==e){var n=e.call(t,r||"default");if("object"!==l(n))return n;throw new TypeError("@@toPrimitive must return a primitive value.")}return("string"===r?String:Number)(t)}(t,"string");return"symbol"===l(r)?r:String(r)}(r))in t?Object.defineProperty(t,r,{value:e,enumerable:!0,configurable:!0,writable:!0}):t[r]=e,t}exports.NullDispatch=n,exports.RootContextProvider=function(e){var n=e.children,o=e.reducer,c=e.customParams,l=e.initialState,s=u(t.useReducer(o,l),2),p=s[0],y=s[1];return r.jsx(a.Provider,{value:p,children:r.jsx(f.Provider,{value:i(y,c),children:n})})},exports.combineReducers=function(t){return function(r,n){var o=function(t){for(var r=1;r<arguments.length;r++){var e=null!=arguments[r]?arguments[r]:{};r%2?s(Object(e),!0).forEach((function(r){p(t,r,e[r])})):Object.getOwnPropertyDescriptors?Object.defineProperties(t,Object.getOwnPropertyDescriptors(e)):s(Object(e)).forEach((function(r){Object.defineProperty(t,r,Object.getOwnPropertyDescriptor(e,r))}))}return t}({},r=r||{});return Object.keys(t).forEach((function(i){var u=t[i];if(u){i in r||(r[i]={});var c=e.produce(r[i]||{},(function(t){u(t||{},n)}));o[i]=c}})),o}},exports.createServerStore=function(t,r,e){var n={root:e||{},dispatch:i((function(r){n.root=t(n.root,r)}),r)};return n},exports.isPromise=o,exports.useStateDispatch=function(){return t.useContext(f)||n},exports.useStateSelectorT=function(r){var e=t.useContext(a);return r&&e?r(e):e},exports.wrapDispatchWithAsync=i;
+'use strict';
+
+var react = require('react');
+var jsxRuntime = require('react/jsx-runtime');
+
+function createServerStore(reducer, customParams, initialState) {
+  var ssrDispatch = function ssrDispatch(action) {
+    store.root = reducer(store.root, action);
+  };
+  var store = {
+    root: initialState || {},
+    dispatch: wrapDispatchWithAsync(ssrDispatch, customParams)
+  };
+  store.dispatch({
+    type: '@@INIT'
+  });
+  return store;
+}
+function NullDispatch(s) {}
+function isPromise(v) {
+  return v && typeof v.then === 'function';
+}
+function wrapDispatchWithAsync(dispatch, customParams) {
+  return function (nextState) {
+    return new Promise(function (resolve, reject) {
+      if (isPromise(nextState)) {
+        nextState.then(function (s) {
+          if (typeof s === 'function') {
+            var r = s(dispatch, {}, customParams);
+            if (isPromise(r)) {
+              r.then(function (s) {
+                resolve();
+              })["catch"](function (err) {
+                return reject(err);
+              });
+            } else {
+              resolve();
+            }
+          } else {
+            dispatch(s);
+            resolve();
+          }
+        })["catch"](function (err) {
+          return reject(err);
+        });
+      } else {
+        dispatch(nextState);
+        resolve();
+      }
+    });
+  };
+}
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+var RootContext = /*#__PURE__*/react.createContext(null);
+var DispatchContext = /*#__PURE__*/react.createContext(null);
+function RootContextProvider(_ref) {
+  var children = _ref.children,
+    reducer = _ref.reducer,
+    customParams = _ref.customParams,
+    initialState = _ref.initialState;
+  var _useReducer = react.useReducer(reducer, initialState),
+    _useReducer2 = _slicedToArray(_useReducer, 2),
+    root = _useReducer2[0],
+    dispatch = _useReducer2[1];
+  return /*#__PURE__*/jsxRuntime.jsx(RootContext.Provider, {
+    value: root,
+    children: /*#__PURE__*/jsxRuntime.jsx(DispatchContext.Provider, {
+      value: wrapDispatchWithAsync(dispatch, customParams),
+      children: children
+    })
+  });
+}
+function useStateSelectorT(selector) {
+  var root = react.useContext(RootContext);
+  if (selector && root) {
+    return selector(root);
+  } else {
+    return root;
+  }
+}
+function useStateDispatch() {
+  return react.useContext(DispatchContext) || NullDispatch;
+}
+
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function combineReducers(reducers) {
+  return function (rootState, action) {
+    rootState = rootState || {};
+    var wasChanged = false;
+    Object.keys(reducers).forEach(function (k) {
+      var nextReducer = reducers[k];
+      if (nextReducer) {
+        var nextState = nextReducer(rootState[k] || {}, action);
+        if (nextState !== rootState[k]) {
+          rootState[k] = nextState;
+          wasChanged = true;
+        }
+      }
+    });
+    return wasChanged ? _objectSpread({}, rootState) : rootState;
+  };
+}
+
+exports.NullDispatch = NullDispatch;
+exports.RootContextProvider = RootContextProvider;
+exports.combineReducers = combineReducers;
+exports.createServerStore = createServerStore;
+exports.isPromise = isPromise;
+exports.useStateDispatch = useStateDispatch;
+exports.useStateSelectorT = useStateSelectorT;
+exports.wrapDispatchWithAsync = wrapDispatchWithAsync;
+//# sourceMappingURL=index.cjs.js.map

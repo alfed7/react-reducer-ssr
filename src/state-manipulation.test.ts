@@ -4,17 +4,16 @@ import { combineReducers } from './combine-reducers';
 export interface IUsersState {
   userName: string | null
 }
-export function usersReducer(draft: IUsersState, action: any): IUsersState {
+export function usersReducer(state: IUsersState, action: any): IUsersState {
   switch (action.type) {
     case 'USER_LOGIN': {
-      draft.userName = action.value;
+      return {...state, userName: action.value};
     }break;
     case 'LOGIN_SUCCESS': {
-      console.log("first", action.userName)
-      draft.userName = action.userName;
+      return {...state, userName: action.userName};
     }break;
   }
-  return draft
+  return state;
 }
 
 const testReducer = combineReducers({

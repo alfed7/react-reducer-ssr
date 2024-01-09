@@ -1,6 +1,6 @@
 {
   "name": "react-reducer-ssr",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "homepage": "https://github.com/alfed7/react-reducer-ssr",
   "repository": "https://github.com/alfed7/react-reducer-ssr",
   "author": "Alexander Fedorenko",
@@ -14,8 +14,7 @@
   "dependencies": {
   },
   "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "immer": "^10.0.0"
+    "react": "^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.22.10",
@@ -32,7 +31,6 @@
     "@rollup/plugin-terser": "^0.4.3",
     "rollup": "^3.29.2",
     "jest":"^29.7.0",
-    "immer": "^10.0.3",
     "@types/jest": "^29.5.5",
     "@types/node": "^20.6.2",
     "@types/react": "^18.2.21",

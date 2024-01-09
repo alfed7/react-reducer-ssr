@@ -31,6 +31,7 @@ export interface IStateStore<T> {
 }
 export function createServerStore<T>(
   reducer: Reducer<T, AnyAction>, customParams?: any, initialState?: T): IStateStore<T> {
+
   const ssrDispatch = (action: AnyAction) => {
     store.root = reducer(store.root, action);
   };
@@ -38,6 +39,7 @@ export function createServerStore<T>(
     root: initialState || {} as any,
     dispatch: wrapDispatchWithAsync(ssrDispatch, customParams)
   };
+  store.dispatch({ type: '@@INIT' });
   return store;
 }
 
@@ -58,13 +60,11 @@ export function wrapDispatchWithAsync<T>(dispatch: Dispatch<T>, customParams?: a
               if(isPromise(r)) {
                 r
                   .then(((s: T) => {
-                    //dispatch(s);
                     resolve();
                   }) as any)
                   .catch((err: any) => reject(err));
               }
               else {
-                //dispatch(r as T);
                 resolve();
               }
             }

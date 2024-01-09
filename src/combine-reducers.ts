@@ -1,8 +1,6 @@
-import { produce } from "immer";
 import { Reducer } from "react";
 
 export type RootState<S> = {[key: string]: S}
-export type ImmerReducer<S, A> = (s: S, a: A) => void
 
 export type StateFromReducersMapObject<M> = M[keyof M] extends
   | Reducer<any, any>
@@ -34,20 +32,20 @@ export function combineReducers<M>(
       ActionFromReducersMapObject<M>
     >
   : never
-export function combineReducers<S extends Record<string, any>, A>(reducers: {[key: string]: ImmerReducer<S, A>}) {
+export function combineReducers<S extends Record<string, any>, A>(reducers: {[key: string]: Reducer<S, A>}) {
   return (rootState: S, action: A): S => {
     rootState = rootState || {}
-    const rootStateUpdated = {...rootState};
+    let wasChanged = false;
     Object.keys(reducers).forEach(k => {
       const nextReducer = reducers[k];
       if(nextReducer) {
-        if(!(k in rootState)) (rootState as any)[k] = {}
-        const nextState = produce(rootState[k] || {}, (draft: any) => {
-          nextReducer(draft || {}, action);
-        });
-        (rootStateUpdated as Record<string, any>)[k] = nextState
-      }}
-    );
-    return rootStateUpdated;
+        const nextState = nextReducer(rootState[k] || {}, action);
+        if(nextState !== rootState[k]) {
+          (rootState as Record<string, any>)[k] = nextState;
+          wasChanged = true;
+        }
+      }
+    });
+    return wasChanged ? {...rootState} : rootState;
   }
 }
