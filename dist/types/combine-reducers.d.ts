@@ -2,7 +2,6 @@ import { Reducer } from "react";
 export type RootState<S> = {
     [key: string]: S;
 };
-export type ImmerReducer<S, A> = (s: S, a: A) => void;
 export type StateFromReducersMapObject<M> = M[keyof M] extends Reducer<any, any> | undefined ? {
     [P in keyof M]: M[P] extends Reducer<infer S, any> ? S : never;
 } : never;

@@ -55,30 +55,33 @@ export function wrapDispatchWithAsync<T>(dispatch: Dispatch<T>, customParams?: a
       if(isPromise(nextState)) {
         nextState
           .then((s: T) => {
-            if(typeof s === 'function') {
-              const r = (s as ActionFunction)(dispatch as DispatchFunction, {}, customParams);
-              if(isPromise(r)) {
-                r
-                  .then(((s: T) => {
-                    resolve();
-                  }) as any)
-                  .catch((err: any) => reject(err));
-              }
-              else {
-                resolve();
-              }
-            }
-            else {
-              dispatch(s);
-              resolve();
-            }
+            processDispatch<T>(s, dispatch, customParams, resolve, reject);
           })
           .catch((err: any) => reject(err));
       }
       else {
-        dispatch(nextState);
-        resolve();
+        processDispatch<T>(nextState, dispatch, customParams, resolve, reject);
       }
     });
+  }
+}
+
+function processDispatch<T>(s: T, dispatch: Dispatch<T>, customParams: any, resolve: (value: void | PromiseLike<void>) => void, reject: (reason?: any) => void) {
+  if (typeof s === 'function') {
+    const r = (s as ActionFunction)(dispatch as DispatchFunction, {}, customParams);
+    if (isPromise(r)) {
+      r
+        .then(((s1: T) => {
+          resolve();
+        }) as any)
+        .catch((err: any) => reject(err));
+    }
+    else {
+      resolve();
+    }
+  }
+  else {
+    dispatch(s);
+    resolve();
   }
 }
