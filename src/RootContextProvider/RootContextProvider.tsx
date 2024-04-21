@@ -15,7 +15,7 @@ export function RootContextProvider<T extends EmptyState>(
   { children, reducer, customParams, initialState }: IRootContextProps<T>) {
   const [root, dispatch] = useReducer<Reducer<T, AnyAction>>(
     reducer,
-    initialState
+    reducer(initialState, { type: '@@INIT' })
   );
 
   return (
