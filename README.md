@@ -164,7 +164,3 @@ This project is licensed under the MIT License. For more information, see the [L
 ## Support
 
 For support and bug reports, please [open an issue](https://github.com/alfed7/react-reducer-ssr/issues) on GitHub.
-
----
-
-Feel free to adapt and expand this template as needed to provide comprehensive documentation for your `react-reducer-ssr` library. Don't forget to create separate documentation files for API reference, FAQs, and contributing guidelines if necessary.
