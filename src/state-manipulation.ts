@@ -39,7 +39,8 @@ export function createServerStore<T>(
     root: initialState || {} as any,
     dispatch: wrapDispatchWithAsync(ssrDispatch, customParams)
   };
-  store.dispatch({ type: '@@INIT' });
+  if(!initialState)
+    store.dispatch({ type: '@@INIT' });
   return store;
 }
 
