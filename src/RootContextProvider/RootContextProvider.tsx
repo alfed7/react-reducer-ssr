@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, Reducer, createContext, useContext, useReducer } from 'react';
+import { Dispatch, ReactNode, Reducer, createContext, useContext, useMemo, useReducer } from 'react';
 import { AnyAction, EmptyState, NullDispatch, SelectorFunction, wrapDispatchWithAsync } from '../state-manipulation';
 
 const RootContext = createContext(null);
@@ -18,9 +18,14 @@ export function RootContextProvider<T extends EmptyState>(
     initialState || reducer(initialState, { type: '@@INIT' })
   );
 
+  const memoizedDispatch = useMemo(
+    () => wrapDispatchWithAsync(dispatch, customParams),
+    [dispatch, customParams]
+  );
+
   return (
     <RootContext.Provider value={root as any}>
-        <DispatchContext.Provider value={wrapDispatchWithAsync(dispatch, customParams) as any}>
+        <DispatchContext.Provider value={memoizedDispatch as any}>
           {children}
         </DispatchContext.Provider>
     </RootContext.Provider>
