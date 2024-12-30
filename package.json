@@ -1,6 +1,6 @@
 {
   "name": "react-reducer-ssr",
-  "version": "0.6.12",
+  "version": "0.6.16",
   "homepage": "https://github.com/alfed7/react-reducer-ssr",
   "repository": "https://github.com/alfed7/react-reducer-ssr",
   "author": "Alexander Fedorenko",
@@ -14,7 +14,7 @@
   "dependencies": {
   },
   "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0"
+    "react": ">=17.x"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

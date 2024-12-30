@@ -1,8 +1,9 @@
 import { Dispatch, ReactNode, Reducer, createContext, useContext, useMemo, useReducer } from 'react';
-import { AnyAction, EmptyState, NullDispatch, SelectorFunction, wrapDispatchWithAsync } from '../state-manipulation';
+import { AnyAction, DispatchFunction, EmptyState, NullDispatch, SelectorFunction, wrapDispatchWithAsync } from '../state-manipulation';
 
 const RootContext = createContext(null);
 const DispatchContext = createContext(null);
+const CustomParamsContext = createContext(null);
 
 export interface IRootContextProps<T extends EmptyState> {
   children: ReactNode
@@ -26,7 +27,9 @@ export function RootContextProvider<T extends EmptyState>(
   return (
     <RootContext.Provider value={root as any}>
         <DispatchContext.Provider value={memoizedDispatch as any}>
-          {children}
+          <CustomParamsContext.Provider value={customParams}>
+            {children}
+          </CustomParamsContext.Provider>
         </DispatchContext.Provider>
     </RootContext.Provider>
   );
@@ -44,4 +47,26 @@ export function useStateSelectorT<T>(selector: SelectorFunction<T>): any | null 
 
 export function useStateDispatch<T>(): Dispatch<T> {
   return useContext(DispatchContext) || NullDispatch;
+}
+
+export function useCustomParams(): any {
+  return useContext(CustomParamsContext);
+}
+
+export function useLocalReducer<T extends EmptyState>(
+  reducer: Reducer<T, AnyAction>,
+  initialState: T = {} as T
+): [T, DispatchFunction] {
+  const [state, dispatch] = useReducer<Reducer<T, AnyAction>>(
+    reducer,
+    initialState || reducer(initialState, { type: '@@INIT' })
+  );
+  const customParams = useCustomParams();
+
+  const memoizedDispatch = useMemo(
+    () => wrapDispatchWithAsync(dispatch, customParams),
+    [dispatch, customParams]
+  );
+
+  return [state, memoizedDispatch];
 }

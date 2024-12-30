@@ -12,7 +12,7 @@ export type ActionFunction = (dispatch: DispatchFunction, state: any, extraArgum
 export interface ActionCreator<A, P extends any[] = any[]> {
   (...args: P): A | Promise<void> | any
 }
-export type DispatchFunction = ((action: AnyAction 
+export type DispatchFunction = ((action: AnyAction
   | Promise<Action> | ActionCreator<Action> | any) => void)
 
 export interface TypedUseSelectorHook<TState> {
