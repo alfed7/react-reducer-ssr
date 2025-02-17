@@ -35,9 +35,10 @@ export function createServerStore<T>(
   const ssrDispatch = (action: AnyAction) => {
     store.root = reducer(store.root, action);
   };
+  const rootState: T = initialState || {} as any;
   const store: IStateStore<T> = { 
-    root: initialState || {} as any,
-    dispatch: wrapDispatchWithAsync(ssrDispatch, customParams)
+    root: rootState,
+    dispatch: wrapDispatchWithAsync<T>(ssrDispatch as Dispatch<T>, rootState, customParams)
   };
   if(!initialState)
     store.dispatch({ type: '@@INIT' });
@@ -50,26 +51,26 @@ export function isPromise(v: any): v is Promise<any> {
   return v && typeof v.then === 'function';
 }
 
-export function wrapDispatchWithAsync<T>(dispatch: Dispatch<T>, customParams?: any) {
+export function wrapDispatchWithAsync<T>(dispatch: Dispatch<T>, rootState: T, customParams?: any) {
   return (nextState: Promise<T> | T): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
       if(isPromise(nextState)) {
         nextState
           .then((s: T) => {
-            processDispatch<T>(s, dispatch, customParams, resolve, reject);
+            processDispatch<T>(s, dispatch, rootState, customParams, resolve, reject);
           })
           .catch((err: any) => reject(err));
       }
       else {
-        processDispatch<T>(nextState, dispatch, customParams, resolve, reject);
+        processDispatch<T>(nextState, dispatch, rootState, customParams, resolve, reject);
       }
     });
   }
 }
 
-function processDispatch<T>(s: T, dispatch: Dispatch<T>, customParams: any, resolve: (value: void | PromiseLike<void>) => void, reject: (reason?: any) => void) {
+function processDispatch<T>(s: T, dispatch: Dispatch<T>, rootState: T, customParams: any, resolve: (value: void | PromiseLike<void>) => void, reject: (reason?: any) => void) {
   if (typeof s === 'function') {
-    const r = (s as ActionFunction)(dispatch as DispatchFunction, {}, customParams);
+    const r = (s as ActionFunction)(dispatch as DispatchFunction, rootState, customParams);
     if (isPromise(r)) {
       r
         .then(((s1: T) => {

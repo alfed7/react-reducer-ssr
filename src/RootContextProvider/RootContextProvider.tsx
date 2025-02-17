@@ -20,7 +20,7 @@ export function RootContextProvider<T extends EmptyState>(
   );
 
   const memoizedDispatch = useMemo(
-    () => wrapDispatchWithAsync(dispatch, customParams),
+    () => wrapDispatchWithAsync(dispatch, root as any, customParams),
     [dispatch, customParams]
   );
 
@@ -64,7 +64,7 @@ export function useLocalReducer<T extends EmptyState>(
   const customParams = useCustomParams();
 
   const memoizedDispatch = useMemo(
-    () => wrapDispatchWithAsync(dispatch, customParams),
+    () => wrapDispatchWithAsync(dispatch, state as any, customParams),
     [dispatch, customParams]
   );
 
