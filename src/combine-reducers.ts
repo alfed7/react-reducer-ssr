@@ -46,6 +46,6 @@ export function combineReducers<S extends Record<string, any>, A>(reducers: {[ke
         }
       }
     });
-    return wasChanged ? {...rootState} : rootState;
+    return {...rootState};
   }
 }
